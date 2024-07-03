@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: EchoAssistant-backend
+  datasource:
+    url: jdbc:mysql://localhost:3306/echo
+    username: xxxxxx
+    password: xxxxxx
