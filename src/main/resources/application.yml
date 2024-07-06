@@ -5,3 +5,4 @@ spring:
     url: jdbc:mysql://localhost:3306/echo
     username: xxxxxx
     password: xxxxxx
+    driver-class-name: com.mysql.jdbc.Driver
