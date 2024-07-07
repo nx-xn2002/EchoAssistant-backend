@@ -7,7 +7,6 @@ create table if not exists user
 (
     id            bigint auto_increment
         primary key,
-    user_account  varchar(256)                       null comment '登录账号',
     username      varchar(256)                       null comment '用户昵称',
     avatar_url    varchar(1024)                      null comment '用户头像',
     gender        tinyint                            null comment '性别',

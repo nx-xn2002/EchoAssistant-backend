@@ -1,0 +1,113 @@
+package com.bupt.echoassistantbackend.service.impl;
+
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.bupt.echoassistantbackend.common.ErrorCode;
+import com.bupt.echoassistantbackend.common.utils.CheckUtils;
+import com.bupt.echoassistantbackend.common.utils.PasswordUtils;
+import com.bupt.echoassistantbackend.exception.BusinessException;
+import com.bupt.echoassistantbackend.mapper.UserMapper;
+import com.bupt.echoassistantbackend.model.domain.User;
+import com.bupt.echoassistantbackend.model.request.UserRegisterRequest;
+import com.bupt.echoassistantbackend.service.UserService;
+import com.google.code.kaptcha.Constants;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Service;
+
+import static com.bupt.echoassistantbackend.common.UserRole.STUDENT;
+import static com.bupt.echoassistantbackend.common.UserRole.TEACHER;
+
+/**
+ * user service impl
+ *
+ * @author Ni Xiang
+ */
+@Service
+@Slf4j
+public class UserServiceImpl extends ServiceImpl<UserMapper, User>
+        implements UserService {
+    @Resource
+    private UserMapper userMapper;
+
+    @Override
+    public Long userRegister(UserRegisterRequest registerRequest, HttpServletRequest request) {
+        String username = registerRequest.getUsername();
+        String userPassword = registerRequest.getUserPassword();
+        String checkPassword = registerRequest.getCheckPassword();
+        String verifyCode = registerRequest.getVerifyCode();
+        Integer userRole = registerRequest.getUserRole();
+        String phone = registerRequest.getPhone();
+
+        String encoded = (String) request.getSession().getAttribute(Constants.KAPTCHA_SESSION_KEY);
+        request.getSession().removeAttribute(Constants.KAPTCHA_SESSION_KEY);
+        //1.校验
+        if (StringUtils.isAnyBlank(username, userPassword, checkPassword, encoded, verifyCode, phone)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
+        }
+        if (StringUtils.isBlank(encoded)) {
+            throw new BusinessException(ErrorCode.NO_AUTH, "验证码已过期");
+        }
+        if (!PasswordUtils.equals(encoded, verifyCode)) {
+            throw new BusinessException(ErrorCode.NO_AUTH, "验证码错误");
+        }
+        if (userPassword.length() < 8 || checkPassword.length() < 8) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "密码长度小于8");
+        }
+        if (userRole == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户类型错误");
+        }
+        if (!userRole.equals(STUDENT) && !userRole.equals(TEACHER)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户类型错误");
+        }
+        //校验手机号格式
+        if (!CheckUtils.checkPhone(phone)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "手机号格式错误");
+        }
+        //校验用户名格式
+        if (!CheckUtils.checkUsername(username)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "非法的用户名格式");
+        }
+        if (!userPassword.equals(checkPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "两次输入密码不一致");
+        }
+        //校验用户名重复
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username);
+        long count = userMapper.selectCount(queryWrapper);
+        if (count > 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "账号已存在");
+        }
+        //校验手机号重复
+        queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("phone", phone);
+        count = userMapper.selectCount(queryWrapper);
+        if (count > 0) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "手机号已被注册");
+        }
+
+        //2.对密码进行加密
+        String newPassword = PasswordUtils.encode(userPassword);
+
+        //3.插入数据
+        User user = new User();
+        user.setUsername(username);
+        user.setUserPassword(newPassword);
+        user.setUsername(username);
+        user.setUserRole(userRole);
+        user.setAvatarUrl("https://avatars.githubusercontent.com/u/109718247?v=4");
+        user.setPhone(phone);
+        boolean result = save(user);
+        if (!result) {
+            throw new BusinessException(ErrorCode.SYSTEM_ERROR);
+        }
+        log.info("user register succeeded[({}):{}]", user.getId(), username);
+        return user.getId();
+    }
+}
+
+
+
+
