@@ -7,8 +7,8 @@ spring:
     name: EchoAssistant-backend
   datasource:
     url: jdbc:mysql://localhost:3306/echo
-    username: ******
-    password: ******
+    username: root
+    password: NXiang2002
 
 # springdoc-openapi项目配置
 springdoc:
@@ -38,3 +38,24 @@ mybatis-plus:
       logic-delete-field: deleted_flag # 全局逻辑删除的实体字段名
       logic-delete-value: 1 # 逻辑已删除值(默认为 1)
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+
+
+# 验证码配置
+kaptcha:
+  border: "no"             # 是否有边框，默认为 yes，可选 yes、no
+  border-color: 105,179,90       # 边框颜色
+  text-producer:
+    font:
+      color: blue          # 验证码字体颜色
+      size: 40             # 文本字符大小
+      names: 宋体,楷体      # 文本字体样式
+    char:
+      length: 5          # 验证码文本字符长度
+  image:
+    width: 120             # 图片宽度
+    height: 40             # 图片高度
+  session:
+    key: code              # 存储 session key
+
+common:
+  salt: bupt1234
