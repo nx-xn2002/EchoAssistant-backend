@@ -3,7 +3,7 @@ package com.bupt.echoassistantbackend.exception;
 
 import com.bupt.echoassistantbackend.common.BaseResponse;
 import com.bupt.echoassistantbackend.common.ErrorCode;
-import com.bupt.echoassistantbackend.common.ResultUtils;
+import com.bupt.echoassistantbackend.common.utils.ResultUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
