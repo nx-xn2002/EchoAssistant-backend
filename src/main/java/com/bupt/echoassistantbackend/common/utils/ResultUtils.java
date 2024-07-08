@@ -1,4 +1,7 @@
-package com.bupt.echoassistantbackend.common;
+package com.bupt.echoassistantbackend.common.utils;
+
+import com.bupt.echoassistantbackend.common.BaseResponse;
+import com.bupt.echoassistantbackend.common.ErrorCode;
 
 /**
  * 结果工具类
