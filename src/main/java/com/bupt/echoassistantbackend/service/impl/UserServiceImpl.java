@@ -8,6 +8,7 @@ import com.bupt.echoassistantbackend.common.utils.PasswordUtils;
 import com.bupt.echoassistantbackend.exception.BusinessException;
 import com.bupt.echoassistantbackend.mapper.UserMapper;
 import com.bupt.echoassistantbackend.model.domain.User;
+import com.bupt.echoassistantbackend.model.request.UserLoginRequest;
 import com.bupt.echoassistantbackend.model.request.UserRegisterRequest;
 import com.bupt.echoassistantbackend.service.UserService;
 import com.google.code.kaptcha.Constants;
@@ -17,8 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import static com.bupt.echoassistantbackend.common.UserRole.STUDENT;
-import static com.bupt.echoassistantbackend.common.UserRole.TEACHER;
+import static com.bupt.echoassistantbackend.content.UserContent.STUDENT;
+import static com.bupt.echoassistantbackend.content.UserContent.TEACHER;
 
 /**
  * user service impl
@@ -105,6 +106,49 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         log.info("user register succeeded[({}):{}]", user.getId(), username);
         return user.getId();
+    }
+
+    @Override
+    public User userLogin(UserLoginRequest loginRequest, HttpServletRequest request) {
+        String username = loginRequest.getUsername();
+        String userPassword = loginRequest.getUserPassword();
+        //校验
+        if (StringUtils.isAnyBlank(username, userPassword)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "请求参数为空");
+        }
+        if (!CheckUtils.checkUsername(username)) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名或密码错误");
+        }
+        if (userPassword.length() < 8) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名或密码错误");
+        }
+        //查找
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("username", username).eq("user_password", PasswordUtils.encode(userPassword));
+        User user = userMapper.selectOne(queryWrapper);
+        if (user == null) {
+            throw new BusinessException(ErrorCode.PARAMS_ERROR, "用户名或密码错误");
+        }
+        //脱敏并返回
+        return getSafetyUser(user);
+    }
+
+    /**
+     * 用户信息脱敏
+     *
+     * @param user user
+     * @return {@link User }
+     * @author Ni Xiang
+     */
+    private static User getSafetyUser(User user) {
+        User newUser = new User();
+        newUser.setUsername(user.getUsername());
+        newUser.setAvatarUrl(user.getAvatarUrl());
+        newUser.setGender(user.getGender());
+        newUser.setPhone(user.getPhone());
+        newUser.setEmail(user.getEmail());
+        newUser.setUserRole(user.getUserRole());
+        return newUser;
     }
 }
 

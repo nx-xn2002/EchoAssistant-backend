@@ -2,6 +2,7 @@ package com.bupt.echoassistantbackend.service;
 
 import com.bupt.echoassistantbackend.model.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.bupt.echoassistantbackend.model.request.UserLoginRequest;
 import com.bupt.echoassistantbackend.model.request.UserRegisterRequest;
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -20,4 +21,14 @@ public interface UserService extends IService<User> {
      * @author Ni Xiang
      */
     Long userRegister(UserRegisterRequest registerRequest, HttpServletRequest request);
+
+    /**
+     * user login
+     *
+     * @param loginRequest login request
+     * @param request      request
+     * @return {@link User }
+     * @author Ni Xiang
+     */
+    User userLogin(UserLoginRequest loginRequest, HttpServletRequest request);
 }
