@@ -59,3 +59,23 @@ kaptcha:
 
 common:
   salt: bupt1234
+
+iflytek:
+  host-url: https://ise-api.xfyun.cn/v2/open-ise
+  appid: xxxxx
+  api:
+    key: xxxxx
+    secret: xxxxx
+
+#线程池配置
+thread-pool-config:
+  #核心线程数
+  core-pool-size: 5
+  #最大线程数
+  max-pool-size: 10
+  #队列容量
+  queue-capacity: 5
+  #线程活跃时间,单位秒
+  keep-alive-seconds: 60
+
+
