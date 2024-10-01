@@ -21,9 +21,7 @@ public class CheckUtils {
         }
         for (int i = 0; i < 11; i++) {
             char c = phone.charAt(i);
-            if (c >= '0' && c <= '9') {
-                continue;
-            } else {
+            if (c < '0' || c > '9') {
                 return false;
             }
         }
