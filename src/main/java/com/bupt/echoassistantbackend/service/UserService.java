@@ -31,4 +31,13 @@ public interface UserService extends IService<User> {
      * @author Ni Xiang
      */
     User userLogin(UserLoginRequest loginRequest, HttpServletRequest request);
+
+    /**
+     * 获取当前登录用户
+     *
+     * @param request
+     * @return {@link User }
+     * @author nx-xn2002
+     */
+    User getLoginUser(HttpServletRequest request);
 }

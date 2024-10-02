@@ -59,4 +59,17 @@ public class UserController {
         User user = userService.userLogin(loginRequest, request);
         return ResultUtils.success(user);
     }
+
+    /**
+     * 用户信息修改
+     *
+     * @param newUser new user
+     * @param request request
+     * @return {@link BaseResponse }<{@link Boolean }>
+     * @author nx-xn2002
+     */
+    @PostMapping("/update")
+    public BaseResponse<Boolean> userUpdate(@RequestBody User newUser,HttpServletRequest request){
+        return ResultUtils.success(true);
+    }
 }

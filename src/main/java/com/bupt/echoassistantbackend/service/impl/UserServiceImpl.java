@@ -18,8 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import static com.bupt.echoassistantbackend.content.UserContent.STUDENT;
-import static com.bupt.echoassistantbackend.content.UserContent.TEACHER;
+import static com.bupt.echoassistantbackend.content.UserContent.*;
 
 /**
  * user service impl
@@ -131,6 +130,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         }
         //脱敏并返回
         return getSafetyUser(user);
+    }
+
+    @Override
+    public User getLoginUser(HttpServletRequest request) {
+        if (request == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN);
+        }
+        // 先判断是否已登录
+        Object userObj = request.getSession().getAttribute(USER_LOGIN);
+        User currentUser = (User) userObj;
+        if (currentUser == null || currentUser.getId() == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN);
+        }
+        long userId = currentUser.getId();
+        currentUser = this.getById(userId);
+        if (currentUser == null) {
+            throw new BusinessException(ErrorCode.NOT_LOGIN);
+        }
+        return currentUser;
     }
 
     /**
