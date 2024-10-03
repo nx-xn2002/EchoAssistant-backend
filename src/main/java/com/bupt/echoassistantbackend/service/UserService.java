@@ -1,7 +1,7 @@
 package com.bupt.echoassistantbackend.service;
 
-import com.bupt.echoassistantbackend.model.domain.User;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.bupt.echoassistantbackend.model.domain.User;
 import com.bupt.echoassistantbackend.model.request.UserLoginRequest;
 import com.bupt.echoassistantbackend.model.request.UserRegisterRequest;
 import jakarta.servlet.http.HttpServletRequest;

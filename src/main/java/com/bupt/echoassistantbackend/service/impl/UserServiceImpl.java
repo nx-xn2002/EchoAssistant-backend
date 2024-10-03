@@ -93,9 +93,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         //3.插入数据
         User user = new User();
-        user.setUsername(username);
+        user.setUserName(username);
         user.setUserPassword(newPassword);
-        user.setUsername(username);
+        user.setUserName(username);
         user.setUserRole(userRole);
         user.setAvatarUrl("https://avatars.githubusercontent.com/u/109718247?v=4");
         user.setPhone(phone);
@@ -160,7 +160,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
      */
     private static User getSafetyUser(User user) {
         User newUser = new User();
-        newUser.setUsername(user.getUsername());
+        newUser.setUserName(user.getUserName());
         newUser.setAvatarUrl(user.getAvatarUrl());
         newUser.setGender(user.getGender());
         newUser.setPhone(user.getPhone());
